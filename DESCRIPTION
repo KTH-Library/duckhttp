@@ -1,0 +1,24 @@
+Package: duckhttp
+Title: Query duckdb using http
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Markus",
+           family = "Skyttner",
+           role = c("cre", "aut"),
+           email = "markussk@kth.se")
+Description: The duckdb database engine has an extension called httpserver which allows
+    remote clients to issue queries against a REST API providing JSON over http(s).
+    This R package provides a function to issue queries to such remote duckdb instances
+    and get results back in tabular form. 
+License: AGPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    httr2,
+    RcppSimdJson,
+    readr,
+    tibble
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

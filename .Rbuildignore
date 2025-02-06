@@ -1,0 +1,8 @@
+^\.github$
+^LICENSE\.md$
+^.vscode$
+
+^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
