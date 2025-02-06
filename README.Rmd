@@ -7,14 +7,18 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
 ```
+
 
 # duckhttp
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/KTH-Library/duckhttp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/KTH-Library/duckhttp/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of duckhttp is to provide functions to query and read responses from a duckdb server running the httpserver extension. 
@@ -22,7 +26,7 @@ The goal of duckhttp is to provide functions to query and read responses from a 
 ## Getting a connection
 
 ```{r connection}
-#| eval: false
+#| eval: true
 
 library(duckhttp)
 
@@ -44,7 +48,7 @@ con |> duckhttp_ui()
 Once connected, issue a simple query:
 
 ```{r query}
-#| eval: false
+#| eval: true
 
 # to issue an sql query, use the duckhttp_read() fcn
 query <- "from lineitem limit 5"
@@ -56,7 +60,7 @@ The enabled extensions in the remote duckdb instance can be utilized, including 
 An example where the `json`-extension is utilized to look up identifiers related a specific set of DOIs by querying the OpenAlex API using ducksql:
 
 ```{r custom-query}
-#| eval: false
+#| eval: true
 
 # example with custom ducksql query which utilizes the duckdb json extension 
 # to query the OpenAlex API to resolve DOI identifiers
@@ -109,7 +113,7 @@ DUCKDB_HTTPSERVER_FOREGROUND=1 DUCKDB_HTTPSERVER_DEBUG=1 duckdb -c "install http
 Then you can use the connectionstring "http://localhost:8888" for example
 
 ```{r localserver}
-#| eval: false
+#| eval: true
 
 library(duckhttp)
 

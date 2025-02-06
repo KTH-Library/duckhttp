@@ -143,6 +143,6 @@ duckhttp_read <- function(con = duckhttp_con(quiet = TRUE), query = NULL) {
 #' @importFrom utils browseURL
 duckhttp_ui <- function(con = duckhttp_con(quiet = FALSE)) {
   message("Please open the following url in your browser: ")
-  browseURL(con$ui_base)
+  if (interactive()) browseURL(con$ui_base)
   con$ui_base
 }
