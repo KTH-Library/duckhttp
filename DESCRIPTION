@@ -9,7 +9,8 @@ Authors@R:
 Description: The duckdb database engine has an extension called httpserver which allows
     remote clients to issue queries against a REST API providing JSON over http(s).
     This R package provides a function to issue queries to such remote duckdb instances
-    and get results back in tabular form. 
+    and get results back in tabular form. It also provides a couple of functions to
+    enable Arrow Flight SQL database connections to remote servers.
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,7 +19,11 @@ Imports:
     httr2,
     RcppSimdJson,
     readr,
-    tibble
+    tibble,
+    adbcdrivermanager,
+    adbi,
+    DBI,
+    dplyr
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

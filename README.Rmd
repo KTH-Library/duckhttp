@@ -21,86 +21,69 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/KTH-Library/duckhttp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/KTH-Library/duckhttp/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of duckhttp is to provide functions to query and read responses from a duckdb server running the httpserver extension. 
+The goal of duckhttp is to provide functions to query and read responses from a duckdb server running the httpserver extension and/or from a server exposing data using Arrow Flight SQL. 
 
 ## Getting a connection
+
+The section below shows how to ake a connection against the remote source, list tables and issue queries.
 
 ```{r connection}
 #| eval: true
 
+#install.packages("adbi")
+#install.packages("adbcflightsql", repos = "https://community.r-multiverse.org")
+
 library(duckhttp)
 
-# below we assume a duckdb with httpserver extension is running locally 
-# serving http requests against http://localhost/duckserve/ (default)
-# the url_base parameter can be used to specify any other location of the service
+readRenviron("~/.Renviron")
 
-con <- duckhttp_con("http://localhost/duckserve/")
+# load a connectionstring of the format "https://user:pass@hostname:port/path/"
+# perhaps from an environment variable in .Renviron
+# then make a connection against that server
+
+con <- duckhttp_con(Sys.getenv("CS_DEMETRIUS_HTTP"))
 
 # to check that the service is up, use:
 con |> duckhttp_ping()
 
-# to access the server ui in the browser (works if the API is not authenticated):
-con |> duckhttp_ui()
+# list the tables available
+con |> duckhttp_ls()
+
+# to issue custom SQL use (and read results converted from JSONCompact output)
+con |> duckhttp_read("from topics limit 5")
+
+# the same but reading CSV from the server
+con |> duckhttp_read_csv("from topics limit 5")
+
+
+
+# now load a connectionstring of the format "grpc://user:pass@hostname:port/"
+# perhaps from an environment variable in .Renviron
+# then make a connection against that server
+
+con <- adbc_connect(Sys.getenv("CS_DEMETRIUS_FLIGHTSQL"))
+
+# list tables available in the database
+con |> adbc_tables()
+
+# retrieve full table
+con |> adbc_table("topics")
+
+# issue a custom query
+con |> adbc_query("from publishers limit 5")
+
+# disconnect when done
+adbc_disconnect(con)
+
 ```
 
-## Query
-
-Once connected, issue a simple query:
-
-```{r query}
-#| eval: true
-
-# to issue an sql query, use the duckhttp_read() fcn
-query <- "from lineitem limit 5"
-con |> duckhttp_read(query)
-```
+# Backend notes
 
 The enabled extensions in the remote duckdb instance can be utilized, including reading from further remote S3 instances etc. 
 
-An example where the `json`-extension is utilized to look up identifiers related a specific set of DOIs by querying the OpenAlex API using ducksql:
+## Running a duckdb server instance with the httpserver extension
 
-```{r custom-query}
-#| eval: true
-
-# example with custom ducksql query which utilizes the duckdb json extension 
-# to query the OpenAlex API to resolve DOI identifiers
-
-doi_query <- function(doi) {
-
-	filter <- 
-		unique(doi) |> head(50) |> 
-		paste0(collapse = "|") |> sprintf(fmt = "doi:%s")
-
-	url <- 
-		paste0("https://api.openalex.org/works?filter=%s",
-		"&per-page=50&mailto=support@openalex.org") |> 
-		sprintf(filter)
-
-	paste0("from (from read_json_auto('", url,
-	"') select unnest(results) as r) select unnest(r.ids);")  
-}
-
-# these are the DOIs we want to resolve
-dois <- 
-	paste0(
-	"10.1109/JSTQE.2009.2038239, 10.1109/ECOC.2010.5621466, ",
-	"10.1063/1.3521361, 10.1364/nfoec.2010.jwa32, ",
-	"10.4028/www.scientific.net/MSF.645-648.1033"
-	) |> 
-	strsplit(", ") |> unlist()
-
-# here we issue the query to resolve the DOIs above
-con |> duckhttp_read(doi_query(dois))
-
-```
-
-# Running a duckdb instance with the httpserver extension
-
-To get a duckdb server instance running locally serving data at the connectionstring used above, see instructions below.
-
-## Running a duckdb httpserver extension locally
-
-Please see information about the httpserver extension available here:
+To get a duckdb server instance running locally serving data at the connectionstring used above, see instructions below. Please first see information about the httpserver extension available here:
 
 <https://duckdb.org/community_extensions/extensions/httpserver.html>
 
@@ -113,7 +96,7 @@ DUCKDB_HTTPSERVER_FOREGROUND=1 DUCKDB_HTTPSERVER_DEBUG=1 duckdb -c "install http
 Then you can use the connectionstring "http://localhost:8888" for example
 
 ```{r localserver}
-#| eval: true
+#| eval: false
 
 library(duckhttp)
 
@@ -146,7 +129,7 @@ RUN apt update && apt install -y --no-install-recommends \
 	unzip \
 	procps
 
-ENV DUCKDB_VER=v1.1.3
+ENV DUCKDB_VER=v1.3.2
 
 WORKDIR /usr/local/bin
 

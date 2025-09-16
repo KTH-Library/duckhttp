@@ -8,5 +8,7 @@
 
 library(testthat)
 library(duckhttp)
+library(DBI)
 
+Sys.setenv("CI" = TRUE)
 test_check("duckhttp")
