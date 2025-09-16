@@ -1,7 +1,7 @@
 ^\.github$
 ^LICENSE\.md$
 ^.vscode$
-
+^data-raw
 ^README\.Rmd$
 ^_pkgdown\.yml$
 ^docs$

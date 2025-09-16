@@ -2,7 +2,7 @@
 % Please edit documentation in R/api_client.R
 \name{duckhttp_read}
 \alias{duckhttp_read}
-\title{Read data from duckdb running httpserver extension}
+\title{Issue a query against a remote duckdb instance running the httpserver extension (with JSONCompact formatted results converted to data frame)}
 \usage{
 duckhttp_read(con = duckhttp_con(quiet = TRUE), query = NULL)
 }
@@ -15,5 +15,5 @@ duckhttp_read(con = duckhttp_con(quiet = TRUE), query = NULL)
 a tibble with results from the query
 }
 \description{
-Read data from duckdb running httpserver extension
+Issue a query against a remote duckdb instance running the httpserver extension (with JSONCompact formatted results converted to data frame)
 }
