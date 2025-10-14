@@ -1,6 +1,6 @@
 Package: duckhttp
 Title: Query duckdb using http
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(given = "Markus",
            family = "Skyttner",
@@ -21,9 +21,12 @@ Imports:
     readr,
     tibble,
     adbcdrivermanager,
+    adbcflightsql,
     adbi,
+    nanoarrow,
     DBI,
-    dplyr
+    dplyr,
+    bit64
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

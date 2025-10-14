@@ -4,8 +4,12 @@ test_that("issuing a query works", {
 
   con <- duckhttp_con(Sys.getenv("CS_DEMETRIUS_HTTP"))
 
+  query <- 
+    #"from 's3://public/authors_20*.parquet' select * where last_known_institions_country_code = 'SE' and starts_with(display_name, 'Gerald Q. Maguire')"
+    "from topics"
+
   topics <- 
-    con |> duckhttp_read("from topics")
+    con |> duckhttp_read(query)
 
   is_valid <- 
       duckhttp_ping(con) == TRUE &&
