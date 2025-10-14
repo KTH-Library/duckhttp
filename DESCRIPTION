@@ -25,10 +25,10 @@ Imports:
     adbcflightsql,
     nanoarrow,
     DBI,
-    dplyr,
-    bit64
+    dplyr
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    bit64
 Remotes:
     github::r-dbi/adbi,
     github::apache/arrow-adbc/r/adbcdrivermanager,
