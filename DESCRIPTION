@@ -29,4 +29,8 @@ Imports:
     bit64
 Suggests: 
     testthat (>= 3.0.0)
+Remotes:
+    github::apache/arrow-adbc/r/adbcflightsql,
+    github::apache/arrow-adbc/r/adbcdrivermanager,
+    github::apache/arrow-nanoarrow/r
 Config/testthat/edition: 3
