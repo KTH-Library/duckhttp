@@ -20,9 +20,9 @@ Imports:
     RcppSimdJson,
     readr,
     tibble,
+    adbi,
     adbcdrivermanager,
     adbcflightsql,
-    adbi,
     nanoarrow,
     DBI,
     dplyr,
@@ -30,7 +30,10 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0)
 Remotes:
-    github::apache/arrow-adbc/r/adbcflightsql,
+    github::r-dbi/adbi,
     github::apache/arrow-adbc/r/adbcdrivermanager,
+    github::apache/arrow-adbc/r/adbcflightsql,
     github::apache/arrow-nanoarrow/r
+Additional_repositories:
+    https://community.r-multiverse.org
 Config/testthat/edition: 3

@@ -293,18 +293,27 @@ adbc_table <- function(adbc_con, tablename) {
   res <- 
     adbi::dbReadTableArrow(adbc_con, name = tablename)
 
-  custom <- function(schema, inferred_ptype) {
-    for (i in seq_along(schema$children)) {
-      if (schema$children[[i]]$format == "l") {
-        inferred_ptype[[i]] <- bit64::integer64()
+  if (requireNamespace("bit64", quietly = TRUE)) {
+    custom <- function(schema, inferred_ptype) {
+      for (i in seq_along(schema$children)) {
+        if (schema$children[[i]]$format == "l") {
+          inferred_ptype[[i]] <- bit64::integer64()
+        }
       }
+      
+      inferred_ptype
     }
-    
-    inferred_ptype
+
+    res <- 
+      nanoarrow::convert_array_stream(res, to = custom) |> 
+      dplyr::as_tibble()  
+  } else {
+    res <-  # use fallback logic
+      dplyr::as_tibble()  
   }
 
-  nanoarrow::convert_array_stream(res, to = custom) |> 
-  dplyr::as_tibble()  
+   res
+ 
   #   DBI::dbReadTable(adbc_con, name = tablename) |> tibble::as_tibble()
 }
 
@@ -350,19 +359,25 @@ adbc_query_send <- function(adbc_con, query, silent = FALSE) {
 adbc_query <- function(adbc_con, query) {
 
   res <- adbi::dbGetQueryArrow(adbc_con, query)
-  
-  custom <- function(schema, inferred_ptype) {
-    for (i in seq_along(schema$children)) {
-      if (schema$children[[i]]$format == "l") {
-        inferred_ptype[[i]] <- bit64::integer64()
-      }
-    }
-    
-    inferred_ptype
-  }
 
-  nanoarrow::convert_array_stream(res, to = custom) |> 
-  dplyr::as_tibble()
+  if (requireNamespace("bit64", quietly = TRUE)) {  
+    custom <- function(schema, inferred_ptype) {
+      for (i in seq_along(schema$children)) {
+        if (schema$children[[i]]$format == "l") {
+          inferred_ptype[[i]] <- bit64::integer64()
+        }
+      }
+      
+      inferred_ptype
+    }
+
+    res <- 
+      nanoarrow::convert_array_stream(res, to = custom) |> 
+      dplyr::as_tibble()
+  } else {
+    res <-
+      res |> dplyr::as_tibble()
+  }
   
 }
 
