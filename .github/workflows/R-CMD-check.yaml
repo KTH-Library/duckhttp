@@ -40,9 +40,10 @@ jobs:
 
       - name: Install pak and dependencies
         run: |
-          R -e 'install.packages("pak")'
-          R -e 'install.packages("pkgbuild", pak:::private_lib_dir())'
-          R -e 'pak::cache_clean()'
+          install.packages(c("pak", "remotes", "rcmdcheck"))
+          install.packages("pkgbuild", pak:::private_lib_dir())
+          pak::cache_clean()
+        shell: Rscript {0}
 
       - name: Install package dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -51,7 +52,6 @@ jobs:
             https://community.r-multiverse.org
             https://apache.r-universe.dev
             https://cloud.r-project.org
-          # Optionally specify packages that need explicit installation
           packages: |
             github::r-dbi/adbi
             github::apache/arrow-adbc/r/adbcdrivermanager
