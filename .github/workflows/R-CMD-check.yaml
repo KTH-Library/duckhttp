@@ -62,7 +62,6 @@ jobs:
             github::r-dbi/adbi
             github::apache/arrow-adbc/r/adbcdrivermanager
             github::apache/arrow-nanoarrow/r
-            github::apache/arrow-adbc/r/adbcflightsql
             httr2
             RcppSimdJson
             readr
