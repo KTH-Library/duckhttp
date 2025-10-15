@@ -30,6 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Set up latest Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.24.x'
+          check-latest: true
+
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
@@ -37,11 +43,28 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+          extra-repositories: |
+            https://community.r-multiverse.org
+            https://apache.r-universe.dev
+            https://cloud.r-project.org
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Install pak and dependencies
+        run: |
+          install.packages(c("pak", "remotes", "rcmdcheck"))
+          install.packages("pkgbuild", pak:::private_lib_dir())
+          pak::cache_clean()
+        shell: Rscript {0}
+
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
-          needs: check
+          extra-packages: |
+            github::r-dbi/adbi
+            github::apache/arrow-adbc/r/adbcdrivermanager
+            github::apache/arrow-nanoarrow/r
+            httr2
+            RcppSimdJson
+            readr
 
       - uses: r-lib/actions/check-r-package@v2
         with:

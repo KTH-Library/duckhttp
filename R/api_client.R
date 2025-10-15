@@ -248,6 +248,7 @@ duckhttp_adbc_con_default <- function(uri, username = "gizmosql_username", passw
 #' @param cs connectionstring, by default duckhttp_adbc_con_default
 #' @return an adbc connection object
 #' @importFrom adbcdrivermanager adbc_database_init adbc_connection_init
+#' @importFrom adbcflightsql adbcflightsql
 #' @importFrom adbi dbConnect
 #' @export
 adbc_connect <- function(cs) {
@@ -262,7 +263,7 @@ adbc_connect <- function(cs) {
   }
 
   
-  adbi::dbConnect(adbi::adbi("adbcflightsql"),
+  adbi::dbConnect(adbi::adbi(driver = adbcflightsql::adbcflightsql()),
     uri = cs$uri,
     username = cs$username,
     password = cs$password
@@ -276,18 +277,44 @@ adbc_connect <- function(cs) {
 #' @importFrom DBI dbListTables
 #' @export
 adbc_tables <- function(adbc_con) {
-    DBI::dbListTables(adbc_con)
+  adbi::dbListTables(adbc_con)
 }
 
 #' Read full table from remote Flight SQL server
 #' @param adbc_con an object returned from adbc_connect
 #' @param tablename the name of a table to return data from
 #' @return a tibble
-#' @importFrom DBI dbReadTable
-#' @importFrom tibble as_tibble
+#' @importFrom adbi dbReadTableArrow
+#' @importFrom nanoarrow convert_array_stream
+#' @importFrom dplyr as_tibble
 #' @export
 adbc_table <- function(adbc_con, tablename) {
-    DBI::dbReadTable(adbc_con, name = tablename) |> tibble::as_tibble()
+
+  res <- 
+    adbi::dbReadTableArrow(adbc_con, name = tablename)
+
+  if (requireNamespace("bit64", quietly = TRUE)) {
+    custom <- function(schema, inferred_ptype) {
+      for (i in seq_along(schema$children)) {
+        if (schema$children[[i]]$format == "l") {
+          inferred_ptype[[i]] <- bit64::integer64()
+        }
+      }
+      
+      inferred_ptype
+    }
+
+    res <- 
+      nanoarrow::convert_array_stream(res, to = custom) |> 
+      dplyr::as_tibble()  
+  } else {
+    res <-  # use fallback logic
+      dplyr::as_tibble()  
+  }
+
+   res
+ 
+  #   DBI::dbReadTable(adbc_con, name = tablename) |> tibble::as_tibble()
 }
 
 #' Disconnect from the Flight SQL server
@@ -302,22 +329,56 @@ adbc_disconnect <- function(adbc_con) {
 #' @param adbc_con an adbc connection object
 #' @param query the sql query
 #' @param silent boolean to indicate if progress should be reported
-#' @importFrom DBI dbSendQueryArrow dbHasCompleted dbFetchArrowChunk 
+#' @importFrom adbi dbSendQueryArrow dbHasCompleted dbFetchArrowChunk 
 #' @importFrom dplyr bind_rows as_tibble
 #' @export
-adbc_query <- function(adbc_con, query, silent = FALSE) {
+adbc_query_send <- function(adbc_con, query, silent = FALSE) {
 
-  res <- DBI::dbSendQueryArrow(adbc_con, statement = query)
-  ret <- as.data.frame(DBI::dbFetchArrowChunk(res))
+  res <- adbi::dbSendQueryArrow(adbc_con, statement = query)
+  ret <- as.data.frame(adbi::dbFetchArrowChunk(res))
 
-  while (!DBI::dbHasCompleted(res)) {
-    ret <- dplyr::bind_rows(ret, as.data.frame(DBI::dbFetchArrowChunk(res)))
+  while (!adbi::dbHasCompleted(res)) {
+    ret <- dplyr::bind_rows(ret, as.data.frame(adbi::dbFetchArrowChunk(res)))
     #if (!silent) message("fetched ", nrow(ret), " rows")
   }
 
-  DBI::dbClearResult(res)
+  adbi::dbClearResult(res)
 
   return (dplyr::as_tibble(ret)) 
+
+}
+
+#' Query a Flight SQL server
+#' @param adbc_con an adbc connection object
+#' @param query the sql query
+#' @importFrom adbi dbGetQueryArrow 
+#' @importFrom dplyr as_tibble
+#' @importFrom bit64 integer64
+#' @importFrom nanoarrow convert_array_stream
+#' @export
+adbc_query <- function(adbc_con, query) {
+
+  res <- adbi::dbGetQueryArrow(adbc_con, query)
+
+  if (requireNamespace("bit64", quietly = TRUE)) {  
+    custom <- function(schema, inferred_ptype) {
+      for (i in seq_along(schema$children)) {
+        if (schema$children[[i]]$format == "l") {
+          inferred_ptype[[i]] <- bit64::integer64()
+        }
+      }
+      
+      inferred_ptype
+    }
+
+    res <- 
+      nanoarrow::convert_array_stream(res, to = custom) |> 
+      dplyr::as_tibble()
+  } else {
+    res <-
+      res |> dplyr::as_tibble()
+  }
+  
 }
 
 # # would like to connect to an sqlflite server started like this

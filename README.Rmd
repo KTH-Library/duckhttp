@@ -47,30 +47,46 @@ con <- duckhttp_con(Sys.getenv("CS_DEMETRIUS_HTTP"))
 con |> duckhttp_ping()
 
 # list the tables available
-con |> duckhttp_ls()
+#con |> duckhttp_ls()
 
 # to issue custom SQL use (and read results converted from JSONCompact output)
 con |> duckhttp_read("from topics limit 5")
 
 # the same but reading CSV from the server
-con |> duckhttp_read_csv("from topics limit 5")
-
+con |> duckhttp_read_csv("from publishers limit 5")
 
 
 # now load a connectionstring of the format "grpc://user:pass@hostname:port/"
 # perhaps from an environment variable in .Renviron
 # then make a connection against that server
 
+#file.edit("~/.Renviron")
+#readRenviron("~/.Renviron")
 con <- adbc_connect(Sys.getenv("CS_DEMETRIUS_FLIGHTSQL"))
 
 # list tables available in the database
-con |> adbc_tables()
+#con |> adbc_tables()
 
 # retrieve full table
-con |> adbc_table("topics")
+
+con |> adbc_table("publishers")
 
 # issue a custom query
-con |> adbc_query("from publishers limit 5")
+
+"from publishers limit 10" |> 
+	adbc_query(adbc_con = con)
+
+
+con |> adbc_table("topics") |> 
+	dplyr::select(topic_path, works_count, cited_by_count)
+
+con |> adbc_query("from works limit 1")
+
+"from works_best_oa_location 
+select work_id, publisher 
+where is_core is true 
+limit 5" |> 
+adbc_query(adbc_con = con)
 
 # disconnect when done
 adbc_disconnect(con)

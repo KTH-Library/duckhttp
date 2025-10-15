@@ -1,6 +1,6 @@
 Package: duckhttp
 Title: Query duckdb using http
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(given = "Markus",
            family = "Skyttner",
@@ -20,10 +20,21 @@ Imports:
     RcppSimdJson,
     readr,
     tibble,
-    adbcdrivermanager,
     adbi,
+    adbcdrivermanager,
+    adbcflightsql,
+    nanoarrow,
     DBI,
-    dplyr
+    dplyr,
+    bit64
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+Remotes:
+    github::r-dbi/adbi,
+    github::apache/arrow-adbc/r/adbcdrivermanager,
+    github::apache/arrow-nanoarrow/r
+Additional_repositories:
+    https://community.r-multiverse.org,
+    https://apache.r-universe.dev, 
+    https://cloud.r-project.org
 Config/testthat/edition: 3

@@ -38,179 +38,141 @@ con |> duckhttp_ping()
 #> [1] TRUE
 
 # list the tables available
-con |> duckhttp_ls()
-#>  [1] "authors_raw"                         
-#>  [2] "concepts"                            
-#>  [3] "concepts_ancestors"                  
-#>  [4] "concepts_ids"                        
-#>  [5] "concepts_relations"                  
-#>  [6] "funders"                             
-#>  [7] "funders_concepts"                    
-#>  [8] "funders_counts"                      
-#>  [9] "funders_roles"                       
-#> [10] "funders_stats"                       
-#> [11] "institutions"                        
-#> [12] "institutions_counts"                 
-#> [13] "institutions_geo"                    
-#> [14] "institutions_ids"                    
-#> [15] "institutions_relations"              
-#> [16] "publishers"                          
-#> [17] "sources"                             
-#> [18] "sources_counts"                      
-#> [19] "sources_ids"                         
-#> [20] "topics"                              
-#> [21] "authors"                             
-#> [22] "authors_affiliations"                
-#> [23] "authors_concepts"                    
-#> [24] "authors_counts"                      
-#> [25] "authors_institutions"                
-#> [26] "authors_stats"                       
-#> [27] "authors_topics"                      
-#> [28] "authors_topic_shares"                
-#> [29] "works"                               
-#> [30] "works_apc_list"                      
-#> [31] "works_apc_paid"                      
-#> [32] "works_authorships"                   
-#> [33] "works_biblio"                        
-#> [34] "works_citation_normalized_percentile"
-#> [35] "works_cited_by_percentile_year"      
-#> [36] "works_counts_by_year"                
-#> [37] "works_grants"                        
-#> [38] "works_ids"                           
-#> [39] "works_institution_assertions"        
-#> [40] "works_keywords"                      
-#> [41] "works_locations"                     
-#> [42] "works_mesh"                          
-#> [43] "works_primary_location"              
-#> [44] "works_primary_topic"                 
-#> [45] "works_referenced_works"              
-#> [46] "works_related_works"                 
-#> [47] "works_sdgs"                          
-#> [48] "works_summary_stats"                 
-#> [49] "works_topics"
+#con |> duckhttp_ls()
 
 # to issue custom SQL use (and read results converted from JSONCompact output)
 con |> duckhttp_read("from topics limit 5")
 #> # A tibble: 5 × 19
-#>   topic_id subfield_id field_id domain_id topic_path topic field subfield domain
-#>      <int>       <int>    <int>     <int> <chr>      <chr> <chr> <chr>    <chr> 
-#> 1    10418        2745       27         4 4/27/2745… Pelv… Medi… Rheumat… Healt…
-#> 2    13142        1110       11         1 1/11/1110… Gamm… Agri… Plant S… Life …
-#> 3    11531        2003       20         2 2/20/2003… Fina… Econ… Finance  Socia…
-#> 4    12001        1105       11         1 1/11/1105… Evol… Agri… Ecology… Life …
-#> 5    13590        1202       12         2 2/12/1202… Oral… Arts… History  Socia…
-#> # ℹ 10 more variables: wiki_url <chr>, wiki_keywords <chr>, keywords <chr>,
-#> #   updated <dttm>, description <chr>, works_count <int>, cited_by_count <int>,
-#> #   works_api_url <chr>, updated_date <date>, created_date <date>
+#>   topic_id subfield_id field_id domain_id topic_path  topic description keywords
+#>      <int>       <int>    <int>     <int> <chr>       <chr> <chr>       <chr>   
+#> 1    10418        2745       27         4 4/27/2745/… Pelv… This clust… Pelvic …
+#> 2    13142        1110       11         1 1/11/1110/… Gamm… This clust… Gamma-A…
+#> 3    11531        2003       20         2 2/20/2003/… Fina… This clust… Health …
+#> 4    12001        1105       11         1 1/11/1105/… Evol… This clust… Insect …
+#> 5    13590        1202       12         2 2/12/1202/… Oral… This clust… Oral Hi…
+#> # ℹ 11 more variables: subfield <chr>, field <chr>, domain <chr>,
+#> #   wiki_url <chr>, wiki_keywords <chr>, updated <dttm>, works_count <int>,
+#> #   cited_by_count <int>, works_api_url <chr>, updated_date <date>,
+#> #   created_date <date>
 
 # the same but reading CSV from the server
-con |> duckhttp_read_csv("from topics limit 5")
-#> # A tibble: 5 × 19
-#>   topic_id subfield_id field_id domain_id topic_path topic field subfield domain
-#>      <dbl>       <dbl>    <dbl>     <dbl> <chr>      <chr> <chr> <chr>    <chr> 
-#> 1    10418        2745       27         4 4/27/2745… Pelv… Medi… Rheumat… Healt…
-#> 2    13142        1110       11         1 1/11/1110… Gamm… Agri… Plant S… Life …
-#> 3    11531        2003       20         2 2/20/2003… Fina… Econ… Finance  Socia…
-#> 4    12001        1105       11         1 1/11/1105… Evol… Agri… Ecology… Life …
-#> 5    13590        1202       12         2 2/12/1202… Oral… Arts… History  Socia…
-#> # ℹ 10 more variables: wiki_url <chr>, wiki_keywords <chr>, keywords <chr>,
-#> #   updated <dttm>, description <chr>, works_count <dbl>, cited_by_count <dbl>,
-#> #   works_api_url <chr>, updated_date <date>, created_date <date>
-
+con |> duckhttp_read_csv("from publishers limit 5")
+#> # A tibble: 5 × 20
+#>   publisher_id display_name   alternate_titles country_codes parent_publisher_id
+#>          <dbl> <chr>          <lgl>            <chr>         <lgl>              
+#> 1   4366305896 INFAD Associa… NA               <NA>          NA                 
+#> 2   4310322437 Centro de Est… NA               ES            NA                 
+#> 3   4310312088 Diretório Aca… NA               BR            NA                 
+#> 4   4310313036 Gabriel Dumon… NA               CA            NA                 
+#> 5   4310317335 Muzeum Małego… NA               PL            NA                 
+#> # ℹ 15 more variables: parent_publisher_display_name <lgl>, lineage <dbl>,
+#> #   hierarchy_level <dbl>, wikidata_id <dbl>, ror <lgl>, homepage_url <chr>,
+#> #   image_url <chr>, image_thumbnail_url <chr>, works_count <dbl>,
+#> #   cited_by_count <dbl>, sources_count <dbl>, sources_api_url <chr>,
+#> #   updated_date <date>, created_date <date>, updated <dttm>
 
 
 # now load a connectionstring of the format "grpc://user:pass@hostname:port/"
 # perhaps from an environment variable in .Renviron
 # then make a connection against that server
 
+#file.edit("~/.Renviron")
+#readRenviron("~/.Renviron")
 con <- adbc_connect(Sys.getenv("CS_DEMETRIUS_FLIGHTSQL"))
 
 # list tables available in the database
-con |> adbc_tables()
-#>  [1] "authors"                             
-#>  [2] "authors_affiliations"                
-#>  [3] "authors_concepts"                    
-#>  [4] "authors_counts"                      
-#>  [5] "authors_institutions"                
-#>  [6] "authors_raw"                         
-#>  [7] "authors_stats"                       
-#>  [8] "authors_topic_shares"                
-#>  [9] "authors_topics"                      
-#> [10] "concepts"                            
-#> [11] "concepts_ancestors"                  
-#> [12] "concepts_ids"                        
-#> [13] "concepts_relations"                  
-#> [14] "funders"                             
-#> [15] "funders_concepts"                    
-#> [16] "funders_counts"                      
-#> [17] "funders_roles"                       
-#> [18] "funders_stats"                       
-#> [19] "institutions"                        
-#> [20] "institutions_counts"                 
-#> [21] "institutions_geo"                    
-#> [22] "institutions_ids"                    
-#> [23] "institutions_relations"              
-#> [24] "publishers"                          
-#> [25] "sources"                             
-#> [26] "sources_counts"                      
-#> [27] "sources_ids"                         
-#> [28] "topics"                              
-#> [29] "works"                               
-#> [30] "works_apc_list"                      
-#> [31] "works_apc_paid"                      
-#> [32] "works_authorships"                   
-#> [33] "works_biblio"                        
-#> [34] "works_citation_normalized_percentile"
-#> [35] "works_cited_by_percentile_year"      
-#> [36] "works_counts_by_year"                
-#> [37] "works_grants"                        
-#> [38] "works_ids"                           
-#> [39] "works_institution_assertions"        
-#> [40] "works_keywords"                      
-#> [41] "works_locations"                     
-#> [42] "works_mesh"                          
-#> [43] "works_primary_location"              
-#> [44] "works_primary_topic"                 
-#> [45] "works_referenced_works"              
-#> [46] "works_related_works"                 
-#> [47] "works_sdgs"                          
-#> [48] "works_summary_stats"                 
-#> [49] "works_topics"
+#con |> adbc_tables()
 
 # retrieve full table
-con |> adbc_table("topics")
-#> # A tibble: 4,516 × 19
-#>    topic_id subfield_id field_id domain_id topic_path      topic  field subfield
-#>       <int>       <int>    <int>     <int> <chr>           <chr>  <chr> <chr>   
-#>  1    10418        2745       27         4 4/27/2745/10418 Pelvi… Medi… Rheumat…
-#>  2    13142        1110       11         1 1/11/1110/13142 Gamma… Agri… Plant S…
-#>  3    11531        2003       20         2 2/20/2003/11531 Finan… Econ… Finance 
-#>  4    12001        1105       11         1 1/11/1105/12001 Evolu… Agri… Ecology…
-#>  5    13590        1202       12         2 2/12/1202/13590 Oral … Arts… History 
-#>  6    11650        1307       13         1 1/13/1307/11650 Biolo… Bioc… Cell Bi…
-#>  7    14101        2003       20         2 2/20/2003/14101 The F… Econ… Finance 
-#>  8    10940        2604       26         3 3/26/2604/10940 Mathe… Math… Applied…
-#>  9    11755        3312       33         2 2/33/3312/11755 Influ… Soci… Sociolo…
-#> 10    14506        1204       12         2 2/12/1204/14506 Archa… Arts… Archeol…
-#> # ℹ 4,506 more rows
-#> # ℹ 11 more variables: domain <chr>, wiki_url <chr>, wiki_keywords <chr>,
-#> #   keywords <chr>, updated <dttm>, description <chr>, works_count <int>,
-#> #   cited_by_count <int>, works_api_url <chr>, updated_date <date>,
-#> #   created_date <date>
+
+con |> adbc_table("publishers")
+#> # A tibble: 10,741 × 20
+#>    publisher_id display_name  alternate_titles country_codes parent_publisher_id
+#>         <int64> <chr>         <chr>            <chr>                     <int64>
+#>  1   4366305896 INFAD Associ… <NA>             <NA>                           NA
+#>  2   4310322437 Centro de Es… <NA>             ES                             NA
+#>  3   4310312088 Diretório Ac… <NA>             BR                             NA
+#>  4   4310313036 Gabriel Dumo… <NA>             CA                             NA
+#>  5   4310317335 Muzeum Małeg… <NA>             PL                             NA
+#>  6   4310317597 Diritto Civi… <NA>             IT                             NA
+#>  7   4310311065 Laboratoire … <NA>             FR                             NA
+#>  8   4310311121 Société Jule… <NA>             FR                             NA
+#>  9   4310311127 Association … <NA>             FR                             NA
+#> 10   4310312236 Centro Latin… <NA>             BR                             NA
+#> # ℹ 10,731 more rows
+#> # ℹ 15 more variables: parent_publisher_display_name <chr>, lineage <chr>,
+#> #   hierarchy_level <int>, wikidata_id <chr>, ror <chr>, homepage_url <chr>,
+#> #   image_url <chr>, image_thumbnail_url <chr>, works_count <int>,
+#> #   cited_by_count <int>, sources_count <int>, sources_api_url <chr>,
+#> #   updated_date <date>, created_date <date>, updated <dttm>
 
 # issue a custom query
-con |> adbc_query("from publishers limit 5")
-#> # A tibble: 5 × 11
-#>   publisher_id display_name       alternate_titles country_codes hierarchy_level
-#>          <dbl> <chr>              <chr>            <chr>                   <dbl>
-#> 1   4366305896 INFAD Association  <NA>             <NA>                        0
-#> 2   4310322437 Centro de Estudio… <NA>             ES                          0
-#> 3   4310312088 Diretório Acadêmi… <NA>             BR                          0
-#> 4   4310313036 Gabriel Dumont In… <NA>             CA                          0
-#> 5   4310317335 Muzeum Małego Mia… <NA>             PL                          0
-#> # ℹ 6 more variables: parent_publisher_id <dbl>,
-#> #   parent_publisher_display_name <chr>, works_count <dbl>,
-#> #   cited_by_count <dbl>, sources_api_url <chr>, updated_date <date>
+
+"from publishers limit 10" |> 
+    adbc_query(adbc_con = con)
+#> # A tibble: 10 × 20
+#>    publisher_id display_name  alternate_titles country_codes parent_publisher_id
+#>         <int64> <chr>         <chr>            <chr>                     <int64>
+#>  1   4366305896 INFAD Associ… <NA>             <NA>                           NA
+#>  2   4310322437 Centro de Es… <NA>             ES                             NA
+#>  3   4310312088 Diretório Ac… <NA>             BR                             NA
+#>  4   4310313036 Gabriel Dumo… <NA>             CA                             NA
+#>  5   4310317335 Muzeum Małeg… <NA>             PL                             NA
+#>  6   4310317597 Diritto Civi… <NA>             IT                             NA
+#>  7   4310311065 Laboratoire … <NA>             FR                             NA
+#>  8   4310311121 Société Jule… <NA>             FR                             NA
+#>  9   4310311127 Association … <NA>             FR                             NA
+#> 10   4310312236 Centro Latin… <NA>             BR                             NA
+#> # ℹ 15 more variables: parent_publisher_display_name <chr>, lineage <chr>,
+#> #   hierarchy_level <int>, wikidata_id <chr>, ror <chr>, homepage_url <chr>,
+#> #   image_url <chr>, image_thumbnail_url <chr>, works_count <int>,
+#> #   cited_by_count <int>, sources_count <int>, sources_api_url <chr>,
+#> #   updated_date <date>, created_date <date>, updated <dttm>
+
+
+con |> adbc_table("topics") |> 
+    dplyr::select(topic_path, works_count, cited_by_count)
+#> # A tibble: 4,516 × 3
+#>    topic_path      works_count cited_by_count
+#>    <chr>               <int64>        <int64>
+#>  1 4/27/2745/10418       97978        1074822
+#>  2 1/11/1110/13142       47318         302847
+#>  3 2/20/2003/11531       48907         227195
+#>  4 1/11/1105/12001       21690         144078
+#>  5 2/12/1202/13590       16386          23924
+#>  6 1/13/1307/11650       36930         736965
+#>  7 2/20/2003/14101       41743          24683
+#>  8 3/26/2604/10940       26270         337964
+#>  9 2/33/3312/11755       39028         167651
+#> 10 2/12/1204/14506       62646          69107
+#> # ℹ 4,506 more rows
+
+con |> adbc_query("from works limit 1")
+#> # A tibble: 1 × 32
+#>      work_id doi   doi_registration_age…¹ display_name language language_1 type 
+#>        <dbl> <chr> <chr>                  <chr>        <chr>    <chr>      <chr>
+#> 1 4312954092 10.3… Crossref               <NA>         <NA>     <NA>       grant
+#> # ℹ abbreviated name: ¹​doi_registration_agency
+#> # ℹ 25 more variables: type_crossref <chr>, indexed_in <chr>,
+#> #   cited_by_count <int>, is_retracted <lgl>, is_paratext <lgl>, fwci <dbl>,
+#> #   locations_count <int>, publication_date <date>, publication_year <int>,
+#> #   referenced_works_count <int>, cited_by_api_url <chr>,
+#> #   countries_distinct_count <int>, institutions_distinct_count <int>,
+#> #   corresponding_author_ids <chr>, corresponding_institution_ids <chr>, …
+
+"from works_best_oa_location 
+select work_id, publisher 
+where is_core is true 
+limit 5" |> 
+adbc_query(adbc_con = con)
+#> # A tibble: 5 × 2
+#>      work_id publisher                                        
+#>        <dbl> <chr>                                            
+#> 1 2153665422 Illuminating Engineering Society of Japan        
+#> 2 2153680842 American Geophysical Union                       
+#> 3 3047879070 Institute of Electrical and Electronics Engineers
+#> 4 2512181176 The Iron and Steel Institute of Japan            
+#> 5 3047871181 American Physical Society
 
 # disconnect when done
 adbc_disconnect(con)
