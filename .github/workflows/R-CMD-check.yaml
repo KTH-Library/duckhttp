@@ -37,17 +37,25 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-          extra-repositories: |
-            https://community.r-multiverse.org
-            https://apache.r-universe.dev
-            https://cloud.r-project.org
 
       - name: Install pak and dependencies
         run: |
           R -e 'install.packages("pak")'
           R -e 'install.packages("pkgbuild", pak:::private_lib_dir())'
           R -e 'pak::cache_clean()'
-          R -e 'pak::pkg_install(".", dependencies = TRUE)'
+
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          repos: |
+            https://community.r-multiverse.org
+            https://apache.r-universe.dev
+            https://cloud.r-project.org
+          # Optionally specify packages that need explicit installation
+          packages: |
+            github::r-dbi/adbi
+            github::apache/arrow-adbc/r/adbcdrivermanager
+            github::apache/arrow-nanoarrow/r
 
       - uses: r-lib/actions/check-r-package@v2
         with:
