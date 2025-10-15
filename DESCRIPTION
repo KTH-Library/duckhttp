@@ -33,4 +33,8 @@ Remotes:
     github::r-dbi/adbi,
     github::apache/arrow-adbc/r/adbcdrivermanager,
     github::apache/arrow-nanoarrow/r
+Additional_repositories:
+    https://community.r-multiverse.org,
+    https://apache.r-universe.dev, 
+    https://cloud.r-project.org
 Config/testthat/edition: 3

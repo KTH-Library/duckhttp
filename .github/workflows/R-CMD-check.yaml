@@ -37,10 +37,7 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-          extra-repositories: 
-            - https://community.r-multiverse.org
-            - https://apache.r-universe.dev
-            - https://cloud.r-project.org
+          extra-repositories: https://community.r-multiverse.org,https://apache.r-universe.dev,https://cloud.r-project.org
 
       - name: Install pak and dependencies
         run: |
